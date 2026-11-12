@@ -1,2 +1,2 @@
 deff add(a, b):
-  return a + b
+  return a - b  # バグ
