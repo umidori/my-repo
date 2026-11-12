@@ -5,7 +5,24 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]   # 3つが並列で動く
     steps:
       - uses: actions/checkout@v6
-      - name: テスト実行
-        run: python3 -m unittest -v
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest -v
+
+  report:
+    needs: test            # test がすべて成功したら動く
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "## ✅ テスト結果" >> $GITHUB_STEP_SUMMARY
+          echo "| 項目 | 値 |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| ブランチ | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 実行者 | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Python | 3.11 / 3.12 / 3.13 |" >> $GITHUB_STEP_SUMMARY
