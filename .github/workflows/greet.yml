@@ -1,0 +1,28 @@
+name: Greet
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "あいさつする相手"
+        required: true
+        default: "受講者のみなさん"
+      lang:
+        description: "言語"
+        type: choice
+        options: [ja, en]
+      shout:
+        description: "大声で？"
+        type: boolean
+        default: false
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - if: inputs.lang == 'ja'
+        run: echo "こんにちは、${{ inputs.name }}！"
+      - if: inputs.lang == 'en'
+        run: echo "Hello, ${{ inputs.name }}!"
+      - if: inputs.shout
+        run: echo "${{ inputs.name }}" | tr 'a-z' 'A-Z'
